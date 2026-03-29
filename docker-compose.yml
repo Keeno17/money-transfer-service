@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16
+    container_name: money-transfer-db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: money_transfer
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./database/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  transaction-service:
+    build: ./transaction-service
+    container_name: transaction-service
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"
+
+  gateway:
+    build: ./gateway
+    container_name: money-transfer-gateway
+    env_file:
+      - .env
+    depends_on:
+      - transaction-service
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:
