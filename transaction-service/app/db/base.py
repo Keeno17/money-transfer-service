@@ -1,6 +1,9 @@
 from sqlalchemy import MetaData
-from sqlalchemy.orm import declarative_base
+from app.db.session import Base
+from app.models.account import Account
+from app.models.transfer import Transfer
+from app.models.ledger import LedgerEntry
+from app.models.audit import AuditLog
 
 metadata = MetaData()
 
-Base = declarative_base()

@@ -32,3 +32,8 @@ class TransferRepo:
         session.flush()
         session.refresh(transfer)
         return transfer
+
+    @staticmethod
+    def get_by_idempotency_key(session: Session, idempotency_key: str) -> Transfer | None:
+        stmt = select(Transfer).where(Transfer.idempotency_key == idempotency_key)
+        return session.execute(stmt).scalar_one_or_none()

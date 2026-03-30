@@ -2,7 +2,7 @@ from enum import Enum
 from sqlalchemy import Column, DateTime, Numeric
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
-from app.db.base import Base
+from app.db.session import Base
 import datetime
 
 class Account(Base):

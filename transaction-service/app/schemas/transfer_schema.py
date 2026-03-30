@@ -1,6 +1,6 @@
 from datetime import datetime
 from decimal import Decimal
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from app.models.transfer import TransferStatus
 import uuid
 
@@ -21,5 +21,4 @@ class GetTransferResponse(BaseModel):
     idempotency_key: str = Field(..., description="The idempotency key used for the transfer request")
     created_at: datetime = Field(..., description="The timestamp when the transfer was created")
 
-    class Config:
-        orm_mode = True
+    model_config = ConfigDict(from_attributes=True)

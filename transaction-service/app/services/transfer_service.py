@@ -36,6 +36,14 @@ class TransferService:
         if not idempotency_key:
             raise ValueError("Idempotency key must be provided")
 
+        existing_transfer = TransferRepo.get_by_idempotency_key(session, idempotency_key)
+
+        if existing_transfer:
+            return existing_transfer
+
+        if from_account == to_account:
+            raise ValueError("from_account and to_account cannot be the same")
+
         new_transfer = Transfer(
             from_account=from_account,
             to_account=to_account,

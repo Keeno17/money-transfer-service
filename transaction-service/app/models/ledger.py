@@ -4,7 +4,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
-from app.db.base import Base
+from app.db.session import Base
 import datetime
 
 class EntryType(str, Enum):
