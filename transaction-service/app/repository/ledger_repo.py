@@ -15,7 +15,7 @@ class LedgerRepo:
         return session.execute(stmt).scalar_one_or_none()
 
     @staticmethod
-    def get_all(session: Session) -> list[LedgerEntry] | None:
+    def get_all(session: Session) -> list[LedgerEntry]:
         return session.query(LedgerEntry).all()
 
     @staticmethod

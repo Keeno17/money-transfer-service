@@ -15,7 +15,7 @@ class AuditRepo:
         return session.execute(stmt).scalar_one_or_none()
 
     @staticmethod
-    def get_all(session: Session) -> list[AuditLog] | None:
+    def get_all(session: Session) -> list[AuditLog]:
         return session.query(AuditLog).all()
 
     @staticmethod

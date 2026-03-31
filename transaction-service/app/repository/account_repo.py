@@ -15,7 +15,28 @@ class AccountRepo:
         return session.execute(stmt).scalar_one_or_none()
 
     @staticmethod
-    def get_all(session: Session) -> list[Account] | None:
+    def get_two_accounts_for_update(
+        session: Session, id1: uuid.UUID, id2: uuid.UUID
+    ) -> tuple[Account | None, Account | None]:
+
+        stmt = (
+            select(Account)
+            .where(Account.id.in_(sorted([id1, id2])))
+            .order_by(Account.id)
+            .with_for_update()
+        )
+
+        results = session.execute(stmt).scalars().all()
+
+        account_map = {account.id: account for account in results}
+
+        return (
+            account_map.get(id1),
+            account_map.get(id2),
+        )
+
+    @staticmethod
+    def get_all(session: Session) -> list[Account]:
         return session.query(Account).all()
 
     @staticmethod

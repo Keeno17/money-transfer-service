@@ -1,5 +1,5 @@
 from enum import Enum
-from sqlalchemy import Column, DateTime, ForeignKey, Numeric, String
+from sqlalchemy import Column, DateTime, ForeignKey, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
@@ -7,12 +7,14 @@ import uuid
 from app.db.session import Base
 import datetime
 
+
 class EventType(str, Enum):
     ERROR = "error"
     WARNING = "warning"
     INFORMATION = "information"
     SUCCESS = "success"
     FAILURE = "failure"
+
 
 class AuditLog(Base):
     """
@@ -25,11 +27,9 @@ class AuditLog(Base):
 
     event_type = Column(SQLEnum(EventType))
 
-    transfer_id = Column(
-        UUID(as_uuid=True), ForeignKey("transfers.id")
-    )
+    transfer_id = Column(UUID(as_uuid=True), ForeignKey("transfers.id"), nullable=True)
 
-    message = Column(String(255))
+    message = Column(String(255), nullable=False)
 
     created_at = Column(
         DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow

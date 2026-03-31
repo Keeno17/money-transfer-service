@@ -4,19 +4,19 @@ from app.db.session import get_db
 import uuid
 
 from app.schemas.transfer_schema import (
-        CreateTransferRequest, 
-        GetTransferResponse,
-    )
+    CreateTransferRequest,
+    GetTransferResponse,
+)
 
 from app.services.transfer_service import TransferService
 
 router = APIRouter(prefix="/transfers")
 
+
 @router.post("/", response_model=GetTransferResponse)
 async def create_transfer(
     transfer_request: CreateTransferRequest,
     session: Session = Depends(get_db),
-
 ) -> GetTransferResponse:
     try:
         new_transfer = TransferService.create_transfer(
@@ -24,11 +24,12 @@ async def create_transfer(
             from_account=transfer_request.from_account,
             to_account=transfer_request.to_account,
             amount=transfer_request.amount,
-            idempotency_key=transfer_request.idempotency_key
+            idempotency_key=transfer_request.idempotency_key,
         )
-        return GetTransferResponse.from_orm(new_transfer)
+        return GetTransferResponse.model_validate(new_transfer)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
 
 @router.get("/{transfer_id}", response_model=GetTransferResponse)
 async def get_transfer_by_id(
@@ -38,16 +39,14 @@ async def get_transfer_by_id(
         transfer = TransferService.get_transfer_by_id(session, transfer_id)
         if not transfer:
             raise HTTPException(status_code=404, detail="Transfer not found")
-        return GetTransferResponse.from_orm(transfer)
+        return GetTransferResponse.model_validate(transfer)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
+
 
 @router.get("/", response_model=list[GetTransferResponse])
 async def list_transfers(
     session: Session = Depends(get_db),
-    ) -> list[GetTransferResponse]:
-        transfers = TransferService.get_all_transfers(session)
-        result = []
-        for transfer in transfers:
-            result.append(GetTransferResponse.from_orm(transfer))
-        return result
+) -> list[GetTransferResponse]:
+    transfers = TransferService.get_all_transfers(session)
+    return [GetTransferResponse.model_validate(t) for t in transfers]

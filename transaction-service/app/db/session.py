@@ -12,8 +12,10 @@ SessionFactory = sessionmaker(
     future=True,
 )
 
+
 def SessionLocal() -> Session:
     return SessionFactory()
+
 
 def get_db():
     db = SessionFactory()

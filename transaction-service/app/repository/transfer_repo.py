@@ -15,7 +15,7 @@ class TransferRepo:
         return session.execute(stmt).scalar_one_or_none()
 
     @staticmethod
-    def get_all(session: Session) -> list[Transfer] | None:
+    def get_all(session: Session) -> list[Transfer]:
         return session.query(Transfer).all()
 
     @staticmethod
@@ -34,6 +34,8 @@ class TransferRepo:
         return transfer
 
     @staticmethod
-    def get_by_idempotency_key(session: Session, idempotency_key: str) -> Transfer | None:
+    def get_by_idempotency_key(
+        session: Session, idempotency_key: str
+    ) -> Transfer | None:
         stmt = select(Transfer).where(Transfer.idempotency_key == idempotency_key)
         return session.execute(stmt).scalar_one_or_none()
