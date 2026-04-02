@@ -31,15 +31,21 @@ class GetTransferResponse(BaseModel):
     )
     amount: Decimal = Field(..., description="The amount transferred")
     status: TransferStatus = Field(..., description="The status of the transfer")
+
     idempotency_key: str = Field(
-        ..., description="The idempotency key used for the transfer request"
-    )
-    request_hash: str = Field(
         ...,
-        description="A hash of the transfer request details for integrity verification",
+        min_length=1,
+        max_length=255,
+        description="The idempotency key used for the transfer request",
     )
+
     created_at: datetime = Field(
         ..., description="The timestamp when the transfer was created"
+    )
+
+    completed_at: datetime | None = Field(
+        ...,
+        description="The timestamp when the transfer was completed (null if not completed yet)",
     )
 
     model_config = ConfigDict(from_attributes=True)

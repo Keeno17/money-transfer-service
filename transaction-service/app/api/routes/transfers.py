@@ -10,6 +10,14 @@ from app.schemas.transfer_schema import (
 
 from app.services.transfer_service import TransferService
 
+from app.core.exceptions import (
+    ValidationError,
+    TransferNotFoundError,
+    AccountNotFoundError,
+    InsufficientFundsError,
+    IdempotencyKeyConflictError,
+)
+
 router = APIRouter(prefix="/transfers")
 
 
@@ -27,8 +35,16 @@ async def create_transfer(
             idempotency_key=transfer_request.idempotency_key,
         )
         return GetTransferResponse.model_validate(new_transfer)
-    except ValueError as e:
+    except ValidationError as e:
         raise HTTPException(status_code=400, detail=str(e))
+    except AccountNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except TransferNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except IdempotencyKeyConflictError as e:
+        raise HTTPException(status_code=409, detail=str(e))
+    except InsufficientFundsError as e:
+        raise HTTPException(status_code=422, detail=str(e))
 
 
 @router.get("/{transfer_id}", response_model=GetTransferResponse)
@@ -37,11 +53,9 @@ async def get_transfer_by_id(
 ) -> GetTransferResponse:
     try:
         transfer = TransferService.get_transfer_by_id(session, transfer_id)
-        if not transfer:
-            raise HTTPException(status_code=404, detail="Transfer not found")
         return GetTransferResponse.model_validate(transfer)
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    except TransferNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.get("/", response_model=list[GetTransferResponse])

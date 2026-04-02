@@ -21,11 +21,8 @@ class AuditRepo:
     @staticmethod
     def create(session: Session, audit: AuditLog) -> AuditLog:
         session.add(audit)
-
         session.flush()
-
         session.refresh(audit)
-        return audit
 
     @staticmethod
     def update(session: Session, audit: AuditLog) -> AuditLog:

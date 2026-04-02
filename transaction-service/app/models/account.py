@@ -2,7 +2,7 @@ from sqlalchemy import Column, DateTime, Numeric, CheckConstraint
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from app.db.session import Base
-import datetime
+from datetime import datetime, timezone
 
 
 class Account(Base):
@@ -17,7 +17,9 @@ class Account(Base):
     balance = Column(Numeric(18, 2), nullable=False, default=0)
 
     created_at = Column(
-        DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow
+        DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
     )
 
     __table_args__ = (

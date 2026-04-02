@@ -5,15 +5,15 @@ from sqlalchemy.types import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from app.db.session import Base
-import datetime
+from datetime import datetime, timezone
 
 
 class EventType(str, Enum):
-    ERROR = "error"
-    WARNING = "warning"
-    INFORMATION = "information"
-    SUCCESS = "success"
-    FAILURE = "failure"
+    VALIDATION_FAILED = "validation failed"
+    TRANSFER_REQUESTED = "transfer requested"
+    TRANSFER_COMPLETED = "transfer completed"
+    TRANSFER_FAILED = "transfer failed"
+    IDEMPOTENCY_REPLAY = "idempotency replay"
 
 
 class AuditLog(Base):
@@ -32,7 +32,9 @@ class AuditLog(Base):
     message = Column(String(255), nullable=False)
 
     created_at = Column(
-        DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow
+        DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
     )
 
     transfer = relationship("Transfer")

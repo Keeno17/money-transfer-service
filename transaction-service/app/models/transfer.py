@@ -5,7 +5,7 @@ from sqlalchemy.types import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from app.db.session import Base
-import datetime
+from datetime import datetime, timezone
 
 
 class TransferStatus(str, Enum):
@@ -37,7 +37,9 @@ class Transfer(Base):
     request_hash = Column(String(64), nullable=False)
 
     created_at = Column(
-        DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow
+        DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
     )
 
     completed_at = Column(DateTime(timezone=True), nullable=True)

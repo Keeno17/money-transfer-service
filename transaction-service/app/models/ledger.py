@@ -1,11 +1,11 @@
 from enum import Enum
-from sqlalchemy import Column, DateTime, ForeignKey, Numeric
+from sqlalchemy import Column, DateTime, ForeignKey, Numeric, CheckConstraint
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
 import uuid
 from app.db.session import Base
-import datetime
+from datetime import datetime, timezone
 
 
 class EntryType(str, Enum):
@@ -31,8 +31,12 @@ class LedgerEntry(Base):
     transfer_id = Column(UUID(as_uuid=True), ForeignKey("transfers.id"), nullable=False)
 
     created_at = Column(
-        DateTime(timezone=True), nullable=False, default=datetime.datetime.utcnow
+        DateTime(timezone=True),
+        nullable=False,
+        default=lambda: datetime.now(timezone.utc),
     )
 
     account = relationship("Account")
     transfer = relationship("Transfer")
+
+    __table_args__ = (CheckConstraint("amount > 0", name="check_amount_non_negative"),)
