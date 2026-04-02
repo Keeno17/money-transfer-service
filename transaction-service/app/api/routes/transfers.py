@@ -10,6 +10,7 @@ from app.schemas.transfer_schema import (
 
 from app.services.transfer_service import TransferService
 
+from app.core.security import verify_service_api_key
 from app.core.exceptions import (
     ValidationError,
     TransferNotFoundError,
@@ -18,7 +19,10 @@ from app.core.exceptions import (
     IdempotencyKeyConflictError,
 )
 
-router = APIRouter(prefix="/transfers")
+router = APIRouter(
+    prefix="/transfers",
+    dependencies=[Depends(verify_service_api_key)],
+)
 
 
 @router.post("/", response_model=GetTransferResponse)
