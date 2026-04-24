@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from app.db.session import get_db
 import uuid
+from app.api.deps import get_db_session
 
 from app.schemas.transfer_schema import (
     CreateTransferRequest,
@@ -28,7 +28,7 @@ router = APIRouter(
 @router.post("/", response_model=GetTransferResponse)
 async def create_transfer(
     transfer_request: CreateTransferRequest,
-    session: Session = Depends(get_db),
+    session: Session = Depends(get_db_session),
 ) -> GetTransferResponse:
     try:
         new_transfer = TransferService.create_transfer(
@@ -53,7 +53,8 @@ async def create_transfer(
 
 @router.get("/{transfer_id}", response_model=GetTransferResponse)
 async def get_transfer_by_id(
-    transfer_id: uuid.UUID, session: Session = Depends(get_db)
+    transfer_id: uuid.UUID, 
+    session: Session = Depends(get_db_session),
 ) -> GetTransferResponse:
     try:
         transfer = TransferService.get_transfer_by_id(session, transfer_id)
@@ -64,7 +65,7 @@ async def get_transfer_by_id(
 
 @router.get("/", response_model=list[GetTransferResponse])
 async def list_transfers(
-    session: Session = Depends(get_db),
+    session: Session = Depends(get_db_session),
 ) -> list[GetTransferResponse]:
     transfers = TransferService.get_all_transfers(session)
     return [GetTransferResponse.model_validate(t) for t in transfers]

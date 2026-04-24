@@ -1,4 +1,20 @@
-require('dotenv').config();
+import express from "express";
 
-const PORT = process.env.PORT;
-const TRANSACTION_SERVICE_URL = process.env.TRANSACTION_SERVICE_URL;
+import transferRouter from "./routes/transferRoutes.js";
+import { errorHandler } from "./middleware/errorHandler.js";
+import { requestLogger } from "./middleware/requestLogger.js";
+
+const app = express();
+
+app.use(express.json());
+app.use(requestLogger);
+
+app.get("/health", (req, res) => {
+    res.json({ status: "ok" })
+});
+
+app.use("/transfers", transferRouter);
+
+app.use(errorHandler);
+
+export default app;

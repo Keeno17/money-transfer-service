@@ -52,10 +52,11 @@ class TransferService:
         if not transfer_id:
             logger.warning("Transfer lookup failed: transfer_id was not provided")
             raise ValidationError("Transfer ID must be provided")
-        try:
-            return TransferRepo.get_by_id(session, transfer_id)
-        except Exception:
+
+        transfer = TransferRepo.get_by_id(session, transfer_id)
+        if not transfer:
             raise TransferNotFoundError(f"Transfer with ID {transfer_id} not found")
+        return transfer
 
     @staticmethod
     def get_all_transfers(session: Session) -> list[Transfer]:
@@ -145,7 +146,7 @@ class TransferService:
                 from_account=from_account,
                 to_account=to_account,
                 amount=amount,
-                status=TransferStatus.PENDING,
+                status=TransferStatus.PENDING.value,
                 idempotency_key=idempotency_key,
                 request_hash=request_fingerprint,
             )
@@ -158,7 +159,7 @@ class TransferService:
             TransferService.create_ledger_entry(session, new_transfer, from_account)
             TransferService.create_ledger_entry(session, new_transfer, to_account)
 
-            new_transfer.status = TransferStatus.COMPLETED
+            new_transfer.status = TransferStatus.COMPLETED.value
             new_transfer.completed_at = datetime.now(timezone.utc)
 
             logger.info("Transfer %s completed successfully", new_transfer.id)

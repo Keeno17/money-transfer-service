@@ -29,9 +29,7 @@ class Transfer(Base):
 
     amount = Column(Numeric(18, 2), nullable=False)
 
-    status = Column(
-        SQLEnum(TransferStatus), nullable=False, default=TransferStatus.PENDING
-    )
+    status = Column(String(20), nullable=False, default=TransferStatus.PENDING.value)
 
     idempotency_key = Column(String(255), nullable=False, unique=True)
     request_hash = Column(String(64), nullable=False)

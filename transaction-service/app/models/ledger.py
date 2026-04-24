@@ -1,5 +1,5 @@
 from enum import Enum
-from sqlalchemy import Column, DateTime, ForeignKey, Numeric, CheckConstraint
+from sqlalchemy import Column, DateTime, ForeignKey, Numeric, CheckConstraint, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum as SQLEnum
 from sqlalchemy.dialects.postgresql import UUID
@@ -26,7 +26,7 @@ class LedgerEntry(Base):
 
     amount = Column(Numeric(18, 2), nullable=False)
 
-    entry_type = Column(SQLEnum(EntryType), nullable=False)
+    entry_type = Column(String(20), nullable=False)
 
     transfer_id = Column(UUID(as_uuid=True), ForeignKey("transfers.id"), nullable=False)
 

@@ -25,7 +25,7 @@ class AuditLog(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
 
-    event_type = Column(SQLEnum(EventType))
+    event_type = Column(String(20))
 
     transfer_id = Column(UUID(as_uuid=True), ForeignKey("transfers.id"), nullable=True)
 
