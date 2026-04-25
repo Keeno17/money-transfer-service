@@ -98,7 +98,7 @@ Content-Type: application/json
 ## Run Locally
 
 ### 1. Start PostgreSQL
-Ensure PostgreSQL is running and the database is created and seeded.
+Ensure PostgreSQL is running, the database is created and seeded.
 
 ### 2. Configure environment variables
 
@@ -115,7 +115,7 @@ cd transaction-service
 python run.py
 ```
 
-### 4. Start the gateway##
+### 4. Start the gateway
 ```bash
 cd gateway
 npm install
