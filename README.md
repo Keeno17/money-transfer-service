@@ -89,7 +89,6 @@ Content-Type: application/json
 - **Docker** - containerisation
 
 ## Future Improvements
-- Docker Compose orchestration for gateway, service, and database
 - automated integration tests
 - structured request correlation ids
 - account creation and account lookup endpoints
